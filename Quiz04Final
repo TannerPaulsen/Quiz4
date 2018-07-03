@@ -1,0 +1,123 @@
+def twoNorm(vector):
+  '''
+  twoNorm takes a vector as it's argument. It then computes the sum of  the squares of each element of the vector. It then returns the square root of this sum.
+  '''
+  # This variable will keep track of the validity of our input.
+  inputStatus = True
+  # This for loop will check each element of the vector to see if it's a number.
+  for i in range(len(vector)):
+    if ((type(vector[i]) != int) and (type(vector[i]) != float) and (type(vector[i]) != complex)):
+      inputStatus = False
+      print("Invalid Input")
+  # If the input is valid the function continues to compute the 2-norm
+  if inputStatus == True:
+    result = 0
+# This for loop will compute the sum of the squares of the elements of the vector.
+    for i in range(len(vector)):
+      result = result + (vector[i]**2)
+    result = result**(1/2)
+    return result
+def normalize(vec07):
+    '''
+    This function takes a vector and searches through its index until it finds the largest absolute value number in it, large,
+    it does this by going through the range of vec07 and checking every i against large until large is equal to the biggest number.
+    It then takes that number and it divides the numbers n in vec07 by the absolute value of large and return those values, such that
+    we get the normalized vector.
+    :param vec07: vector
+    :return: vector
+    '''
+    #I copied and pasted the above code
+    large = 0 # The dummy variable
+    for i in range(len(vec07)):
+        if abs(vec07[i]) > abs(large): # Where it searches through the vector till large is the largest
+            large = vec07[i]
+
+    return [n/abs(large) for n in vec07] # Here is where you take the elements in vec07, n here, and divide it indivually by abs(large) that we got above.
+
+def dot(vec01,vec02):
+    '''
+    This function dot takes two vectors as its arguments then checks to see if they are of compatible dimensions. It then
+    takes the first vector and multiples it to the second vector. This outputs is equal to total in my code. If
+    the two vectors are not of compatible dimensions then it will output Invalid input. The inputs are vec01,vec02 and
+    the output is total.
+    '''
+
+    n = len(vec01)
+    m = len(vec02)
+    #I take the length of both vectors because I need to know if the lengths are equal
+    if n == m:
+        total = 0
+        for i in range(n):
+            total += vec01[i]*vec02[i] #you take the += because it outputs the sum of the multiplication for all elements i
+        return total
+    else:
+        return('Invalid Input')
+def scalarVecMulti(scalar,vec05):
+    '''
+    This function takes two inputs, scalar and vec05, then finds the length of vec05 since it is the length we need to multiply
+    the scalar on. Then it sets the multiplication back to vec05[i], which makes it so that every i is equal to that scalar*i for every i in n.
+    This will then output the new vec05.
+    '''
+    n = len(vec05)
+    for i in range(n):
+        vec05[i] = scalar * vec05[i]  # here the scalar is multiplied to the vector through each element i in the vectors range.
+    return vec05
+
+def vecSubtract(vec03,vec04):
+    '''
+    This function takes two vectors vec03 and vec04, then it will subtract the first vector by the second vector
+    and this will be set to be vec03 for every i then it will output vec03. This goes over the range of n which is the length
+    of the vectors.
+    '''
+
+    n = len(vec03) #the two variables to check if the length is the same
+    m = len(vec04)
+
+    if n == m:
+
+        for i in range(n):
+
+            vec03[i] = vec03[i] - vec04[i] #subtracting vec04 from vec03, you use i to go through all of the elements in both vectors
+        return vec03
+    else:
+        return ('invalid input')
+
+def qrFact(mat01):
+    '''
+    This function takes a Matrix as its argument and then sets the resultQ and resultR to the
+    length of the matrix. Then it sets V to matrix so that it is the same size as well, then it goes through the
+    other functions we have, such as twoNorm to get the sum of the V[i], then it is normalizing it with
+    normalize. Then it will continute until n, where j = i+1 so that it is increasing until it reaches the
+    length of matrix, during this loop it will take the dot product of the resultQ we got in the for loop
+    before and V[j] which is the new column we are looking at. It will then set a scalarVecMulti of
+    resultR[j][i] and resultQ[i] so that we get the projection. then it will subtract through vecSubtract
+    the new column, V[j] and temp. This will give us resultQ and resultR which is what we need for
+    the QR factorization
+    :param mat01:
+    :return:
+    '''
+
+
+    n = len(mat01[0]) #the number of columns
+    m = len(mat01) # number of rows
+    resultQ = [[0]*(m) for i in range(n)] #setting the dummy variables equal to the length of columns
+    resultR = [[0]*(n) for i in range(n)] 
+    V = matrix  
+    for i in range(n):   
+        resultR[i][i] = twoNorm(V[i])  #taking the sum of the V[i] so that we
+        resultQ[i] = normalize(V[i])   #normalizing the column V[i]
+
+        for j in range(i+1,n):
+            resultR[j][i] = dot(resultQ[i],V[j]) #To get the new R[j][i] we have to take the dot product of the two so we can get the projection
+            temp = scalarVecMulti(resultR[j][i],resultQ[i]) #then multiplying it so that we get the total projection
+
+            V[j] = vecSubtract(V[j],temp) #then subtract the new column V[j], by the projection based on the past columns
+    return [resultQ,resultR]
+
+
+
+matrix = [[1, 2, 1], [0, 1, 1], [1, 0, 1]]
+
+
+
+print (qrFact(matrix))
